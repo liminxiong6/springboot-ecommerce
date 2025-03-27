@@ -21,14 +21,14 @@ public class CategoryController {
 //        this.categoryService = categoryService;
 //    }
 
-    @GetMapping("/api/public/categories")
+    @GetMapping("/public/categories")
 //    @RequestMapping(value = "/public/categories", method = RequestMethod.GET)
     public ResponseEntity<List<Category>> getCategories() {
         List<Category> categories = categoryService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PostMapping("/api/public/categories")
+    @PostMapping("/public/categories")
 //    @RequestMapping(value = "/public/categories", method = RequestMethod.POST)
     public ResponseEntity<String> createCategory(@RequestBody Category category) {
         categoryService.createCategory(category);

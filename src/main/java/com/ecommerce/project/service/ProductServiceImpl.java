@@ -25,13 +25,13 @@ public class ProductServiceImpl implements ProductService {
     ModelMapper modelMapper;
 
     @Override
-    public ProductDTO addProduct(Long categoryId, Product product) {
+    public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-
+        Product product = modelMapper.map(productDTO, Product.class);
         product.setImage("default.png");
         product.setCategory(category);
-        double specialPrice = product.getPrice() - product.getDiscount() * 0.01 * product.getPrice();
+        double specialPrice = product.getPrice() - productDTO.getDiscount() * 0.01 * productDTO.getPrice();
         product.setSpecialPrice(specialPrice);
         Product savedProduct = productRepository.save(product);
         return modelMapper.map(savedProduct, ProductDTO.class);
@@ -76,19 +76,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO updateProduct(Long productId, Product product) {
-        Product savedProduct = productRepository.findById(productId)
+    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
+        Product productFromDB = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
-        savedProduct.setProductName(product.getProductName());
-        savedProduct.setDescription(product.getDescription());
-        savedProduct.setQuantity(product.getQuantity());
-        savedProduct.setPrice(product.getPrice());
-        savedProduct.setDiscount(product.getDiscount());
-        savedProduct.setSpecialPrice(product.getSpecialPrice());
-        savedProduct.setCategory(product.getCategory());
+        Product product = modelMapper.map(productDTO, Product.class);
+        productFromDB.setProductName(product.getProductName());
+        productFromDB.setDescription(product.getDescription());
+        productFromDB.setQuantity(product.getQuantity());
+        productFromDB.setPrice(product.getPrice());
+        productFromDB.setDiscount(product.getDiscount());
+        productFromDB.setSpecialPrice(product.getSpecialPrice());
+        productFromDB.setCategory(product.getCategory());
 
-        productRepository.save(savedProduct);
+        Product savedProduct = productRepository.save(productFromDB);
 
         return modelMapper.map(savedProduct, ProductDTO.class);
     }

@@ -10,8 +10,14 @@ import com.ecommerce.project.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -97,9 +103,45 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO deleteProduct(Long productId) {
          Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId))    ;
+            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 
          productRepository.delete(product);
          return modelMapper.map(product, ProductDTO.class);
+    }
+
+    @Override
+    public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
+        Product productFromDB = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+
+        String path = "images/";
+        String fileName = uploadImage(path, image);
+
+        productFromDB.setImage(fileName);
+
+        Product updateProduct = productRepository.save(productFromDB);
+
+        return modelMapper.map(updateProduct, ProductDTO.class);
+    }
+
+    private String uploadImage(String path, MultipartFile file) throws IOException {
+        // File names of current / original file
+        String originalFileName = file.getOriginalFilename();
+
+        // Generate a unique file name
+        String randomId = UUID.randomUUID().toString();
+        // example.jpg --> 123 --> 123.jpg
+        String fileName = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
+        String filePath = path + File.separator + fileName;
+
+        // Check if path exist and create
+        File folder = new File(path);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        // Upload to Server
+        Files.copy(file.getInputStream(), Paths.get(filePath));
+        return fileName;
     }
 }

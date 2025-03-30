@@ -21,7 +21,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -131,5 +130,12 @@ public class AuthController {
 
         UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("signout")
+    public ResponseEntity<?> signoutUser() {
+        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new MessageResponse("You've been signed out!"));
     }
 }

@@ -67,6 +67,12 @@ public class JwtUtils {
                 .build();
     }
 
+    public ResponseCookie getCleanJwtCookie() {
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null)
+                .path("/api").build();
+        return cookie;
+    }
+
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
                         .verifyWith((SecretKey) key())

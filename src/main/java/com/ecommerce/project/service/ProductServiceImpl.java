@@ -77,9 +77,9 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> products = productPage.getContent();
         // this throw exception is optional, depending on the design
-        if (products.isEmpty()) {
-            throw new APIException("No products found");
-        }
+//        if (products.isEmpty()) {
+//            throw new APIException("No products found");
+//        }
 
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))

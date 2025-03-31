@@ -1,6 +1,5 @@
 package com.ecommerce.project.service;
 
-import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Address;
 import com.ecommerce.project.model.User;
 import com.ecommerce.project.payload.AddressDTO;
@@ -31,5 +30,13 @@ public class AddressServiceImpl implements AddressService {
 
         Address savedAddress = addressRepository.save(address);
         return modelMapper.map(savedAddress, AddressDTO.class);
+    }
+
+    @Override
+    public List<AddressDTO> getAddresses() {
+        List<Address> addressList = addressRepository.findAll();
+        return addressList.stream().map(address -> {
+            return modelMapper.map(address, AddressDTO.class);
+        }).toList();
     }
 }

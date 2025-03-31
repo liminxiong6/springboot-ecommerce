@@ -64,7 +64,7 @@ public class CartServiceImpl implements CartService {
         CartItem newCartItem = new CartItem();
         newCartItem.setProduct(product);
         newCartItem.setCart(cart);
-        cart.getCartItems().add(newCartItem); // need to update the association on both sides when you add or remove an entity.
+        cart.getCartItems().add(newCartItem); // add the new cart item in cart(in-memory)
         newCartItem.setQuantity(quantity);
         newCartItem.setDiscount(product.getDiscount());
         newCartItem.setProductPrice(product.getSpecialPrice());
